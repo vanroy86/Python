@@ -1,102 +1,109 @@
+from sys import exit
 from random import randint
 
-# Rooms
-livingRoom = ("Living Room", "You are standing next the the fire in the Living Room.")
-kitchen = ("Kitchen", "You walk into the Kitchen.")
-bathRoom = ("Bathroom", "There is blood on the floor, it\'s still wet.")
-hallway = ("Hallway", "You are in the Hallway.")
+# This is just a base class for all other scenes.
+class Scene(object):
+	# This is the main entry point for each scene, it should describe the Scene and any Land Sharks/Items in it.
+	def enter(self):
+		print "Ooops! Something went wrong, you shouldn't see this!"
+		exit(-1)
 
-
-# Movement
-movement = {
-	livingRoom: (kitchen, hallway),
-	bathRoom: (hallway, ),
-	kitchen: (livingRoom, ),
-	hallway: (livingRoom, kitchen, bathRoom)
+# This is the Class that controls which Scene the player is in and which ones they can go to next
+class Engine(object):
+	def __init__(self, sceneMap):
+		self.sceneMap = sceneMap
 	
-}
+	def play(self):
+		currentScene = self.sceneMap.openingScene()
 
-currentLocation = livingRoom
+		while True:
+			# This loop will change the scene
+			print "\n------"
+			nextSceneName = currentScene.enter()
+			currentScene = self.sceneMap.nextScene(nextSceneName)
 
-# Variables
-#inventory is where we will store the items the player picks up
-inventory = {"Gold":2, "Sword": 18}
+class Death(Scene):
 
-# Drops
-staff = {
-"damage": 15
-}
+	quips = [
+		"You died."
+		"You really suck at this. You died."
+		"Loser, you died!"
+	]
 
-sword = {
-"damage": 18
-}
+	# This method will choose a random Death.quip and print it to the screen
+	def enter(self):
+		print Death.quips[randint(0, len(self.quips)-1)]
+		exit(1)
 
-# Enemies
-orc = {
-"name": "Orc",
-"attack": 15,
-"defence": 5
-}
+class MainCorridor(Scene):
 
-spider = {
-"name": "Spider",
-"attack": 5,
-"defence": 2
-}
+	def enter(self):
+		print "Land Sharks have boarded your ship and they've taken your doughnut."
+		print "\n"
+		print "Your mission is to retrieve your doughnut and then get to the deck of the ship and escape in a life boat."
+		print "You are running down the Main Corridor when a slimey Land Shark comes round the corner. It's blocking your path to the Armory and about to eat you."
+		
+		action = raw_input(">")
 
-zombie = {
-"name": "Zombie",
-"attack": 7,
-"defence": 2
-}
+		if action == "run":
+			print "You try to sprint past the Land Shark but it grabs you by the legs and eats your head."
+			return "Death"
+		if action == "fight":
+			print "As you throw a punch at the formidable Land Shark it opens its mighty jaws rips you apart."
+			print "\n"
+			print "'Mmmmm, tastes like chicken', the Land Shark growls"
+			return "Death"
+		if action == "sneak":
+			print "You jump into a tiny vent and crawl you way passed the Land Shark and into the Armory."
+			print "You're surrouded by weapons."
+			return "Armory"
 
-dwarf = {
-"name": "Dwarf",
-"attack": 9,
-"defence": 5
-}
 
-# Create a list of enemies to choose random ones when rooms are made
-# Don't forget to add new enemies to this list!
-enemies = [orc,spider,zombie,dwarf]
-drops = [staff,sword]
+class Armory(Scene):
 
-# Create a list of drops to choose random ones when rooms are made
+	def enter(self):
+		
+		print "You make your way out of the vent and into the Armory. You do a quick scan of the room to see if there are any Land Sharks hiding but you can't see any."
+		print "\n"
+		print "You grab a pistol and make a dash for the door up to the deck but it's locked. Looks like theres a 4 pin code."
+		doorCode = "%d%d%d%d" % (randint(1,9),randint(1,9),randint(1,9),randint(1,9))
+		print doorCode
+		action  = int(raw_input(">"))		
+		if doorCode == action:
+			print "The door swings open with a great cluck. You run up and onto the Deck of the Ship"
+			return "Deck"
+		else:
+			return "Death"
 
-def exitGame():
-    exit(0)
+class Deck(Scene):
 
-def pickUpItem(itemToPickUp):
-	pass
+	def enter(self):
+		pass
 
-def randomEnemy():
-	randomint = randint(0,len(enemies) - 1)
-	print "You see an enemy",",", "it has:"
-	return enemies[randomint]
+class LifeBoat(Scene):
 
-def printDict(dict_to_print):
-	for i in dict_to_print.items():
-		print dict_to_print[i][i]
-	print "\n"
+	def enter(self):
+		pass
 
-def printInventory():
-	print "\t In you Inventory you have: "
-	for x, y in inventory.items():
-		print ('{} : {}'.format(x,y) )
-	whatNext()
+class Map(object):
 
-print "\t *****"
-print "Welcome to a Text Adventrue"
-print "\t *****"
+	scenes = {
+		"Death": Death(),
+		"MainCorridor": MainCorridor(),
+		"Armory": Armory(),
+		"Deck": Deck(),
+		"LifeBoat": LifeBoat()
+	}
 
-# Game loop
-#Don't remove user input, it'll cause an infinite loop
-while True:
-	print "\n" + currentLocation[1]
-	print "You can go to: "
+	def __init__(self, startScene):
+		self.startScene = startScene
 
-	for (i,t) in enumerate(movement[currentLocation]):
-		print i + 1, t[0]
+	def nextScene(self, sceneName):
+		return Map.scenes.get(sceneName)
 
-	choice = int(raw_input("\nMake a choice: "))
-	currentLocation = movement[currentLocation][choice - 1]
+	def openingScene(self):
+		return self.nextScene(self.startScene)
+
+adventureMap = Map("MainCorridor")
+adventureGame = Engine(adventureMap)
+adventureGame.play()
