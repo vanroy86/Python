@@ -8,7 +8,7 @@ def connScan(tgtHost, tgtPort):
 	try:
 		connSkt = socket(AF_INET, SOCK_STREAM)
 		connSkt.connect((tgtHost, tgtPort))
-		connSkt.send("SomeData\r\n")
+		connSkt.send("VioletPython\r\n")
 		results = connSkt.recv(100)
 		screenLock.acquire()
 		print "[+]%d/tcp open " % tgtPort
@@ -19,7 +19,7 @@ def connScan(tgtHost, tgtPort):
 	finally:
 		screenLock.release()
 		connSkt.close()
-def portScan(tgtHost, tgtPort):
+def portScan(tgtHost, tgtPorts):
 	try:
 		tgtIP = gethostbyname(tgtHost)
 	except:
@@ -31,7 +31,7 @@ def portScan(tgtHost, tgtPort):
 		print "\n[+] Scan Results for: " + tgtName
 
 	except:
-		print "\n[+] SCan Results for: " + tgtIP
+		print "\n[+] Scan Results for: " + tgtIP
 	setdefaulttimeout(1)
 	for tgtPort in tgtPorts:
 		t = Thread(target = connScan, args = (tgtHost, int(tgtPort)))
@@ -42,8 +42,8 @@ def main():
 	parser.add_option("-p", dest = "tgtPort", type = "string", help = "Specify a target port")
 	(options, args) = parser.parse_args()
 	tgtHost = options.tgtHost
-	tgtPort = str(options.tgtPort).split(", ")
-	if (tgtHost = None) | (tgtPort = None):
+	tgtPorts = str(options.tgtPort).split(", ")
+	if (tgtHost == None) | (tgtPorts[0] == None):
 		print parser.usage
 		exit(0)
 	portScan(tgtHost, tgtPorts)
