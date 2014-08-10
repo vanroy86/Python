@@ -3,7 +3,7 @@ from Snorkel.snorkel import snorkelMail
 
 def test_login():
 	mail = snorkelMail()
-	mail.read_mail("imap.gmail.com", "andrewdarnton12", "password")
+	mail.read_mail("imap.gmail.com", "Email", "password")
 
 def test_get_new_mail():
 	pass
