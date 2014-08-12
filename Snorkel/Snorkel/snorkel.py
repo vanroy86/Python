@@ -48,7 +48,8 @@ class snorkelMail(object):
 			if len(messageSubject) > 35:
 				messageSubject = messageSubject[0:32] + "..."
 
-			print  "[" + messageFrom.split()[-1] + "]" + messageSubject + "\n"
+			self.screen.addstr(4,3,"[" + messageFrom.split()[-1] + "]" + "\n")
+			self.screen.addstr(5,5,  messageSubject)
 	def get_user_input(self):
 		pass
 
