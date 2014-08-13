@@ -33,8 +33,9 @@ class snorkelMail(object):
 		unreadMessages = response[0]
 		ids = unreadMessages.split()
 		latestEmails = int(ids[-1])
-
+		k = 4
 		for i in range(latestEmails, latestEmails-15, -1):
+			k += 1
 			typ, data = imap.fetch(i, "(RFC822)")
 			for response_part in data:
 				if isinstance(response_part, tuple):
@@ -48,8 +49,8 @@ class snorkelMail(object):
 			if len(messageSubject) > 35:
 				messageSubject = messageSubject[0:32] + "..."
 
-			self.screen.addstr(4,3,"[" + messageFrom.split()[-1] + "]" + "\n")
-			self.screen.addstr(5,5,  messageSubject)
+			self.screen.addstr(k,3,"[" + messageFrom.split()[-1] + "]" + "\n")
+			self.screen.addstr(20,8,  messageSubject)
 	def get_user_input(self):
 		pass
 
