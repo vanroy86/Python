@@ -34,23 +34,25 @@ class snorkelMail(object):
 		ids = unreadMessages.split()
 		latestEmails = int(ids[-1])
 		k = 4
-		for i in range(latestEmails, latestEmails-15, -1):
+
+		for i in range(latestEmails, latestEmails-15, -1): # Only get 15 emails
 			k += 1
-			typ, data = imap.fetch(i, "(RFC822)")
+			typ, data = imap.fetch(i, "(RFC822)") # RFC822 is the standard format for emails
 			for response_part in data:
 				if isinstance(response_part, tuple):
 					msg = email.message_from_string(response_part[1])
 					messageSubject = msg["subject"]
 					messageFrom = msg["from"]
-
+			# Get rid of unwanted characters
 			messageFrom = messageFrom.replace("<", "")
 			messageFrom = messageFrom.replace(">", "")
 
-			if len(messageSubject) > 35:
+			if len(messageSubject) > 35: # If the subject is too long replace it with "..."
 				messageSubject = messageSubject[0:32] + "..."
 
-			self.screen.addstr(k,3,"[" + messageFrom.split()[-1] + "]" + "\n")
+			self.screen.addstr(k,3,"[" + messageFrom.split()[-1] + "]" + "\n") # Print the sender address to the screen. Using an incremented variable to print on different lines.
 			self.screen.addstr(20,8,  messageSubject)
+
 	def get_user_input(self):
 		pass
 
