@@ -11,25 +11,25 @@ class snorkelMail(object):
 		pass
 
 	def get_new_mail(self):
-		print self.loggedin.check()
+		pass
 
 	def read_mail(self, mailServer, username, password):
+		# try to connect to the server
+		imap = imaplib.IMAP4_SSL(mailServer)
+
 		try:
-			# try to connect to the server
-			 imap = imaplib.IMAP4_SSL(mailServer, "993")
+			loggedin = imap.login(username, password) # Try to connect, if we can't then raise an error and exit
 		except:
-			print "There was an error: %s" % sys.exc_info()[1]
+			print "There was an error connecting: %s" % sys.exc_info()[1]
 			sys.exit(0)
 
-		loggedin = imap.login(username, password)
-		imap.select("INBOX") # Select the Inbox. Gmail has Several inboxes (Inbox, social, promotions)
+		imap.select("INBOX") # Select the Inbox.
 
 		status, response = imap.search(None, "(UNSEEN)") # Check for unread messages
 		unreadMessages = response[0].split()
 		self.screen.addstr(2,2,"You have %s unread messages in Inbox" % len(unreadMessages)) # Print how many unread messages there are
 
-		status, response = imap.search(None, "ALL")
-		messageBody = []
+		status, response = imap.search(None, "ALL") # Search for all messages
 		unreadMessages = response[0]
 		ids = unreadMessages.split()
 		latestEmails = int(ids[-1])
@@ -37,7 +37,7 @@ class snorkelMail(object):
 		t = 30
 
 		for i in range(latestEmails, latestEmails-15, -1): # Only get 15 emails
-			k += 1
+			k += 1 # This allows us to print on different lines
 			t += 1
 			typ, data = imap.fetch(i, "(RFC822)") # RFC822 is the standard format for emails
 			for response_part in data:
