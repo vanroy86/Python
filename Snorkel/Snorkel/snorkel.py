@@ -7,6 +7,14 @@ class snorkelMail(object):
 	def __init__(self):
 		self.screen = curses.initscr()
 
+
+		if curses.has_colors():
+			curses.start_color()
+
+		# Set up colour pairs
+		curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK) # colour pair number, foreground, background
+		curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+
 	def parse_config_file(self, configFile):
 		pass
 
@@ -74,10 +82,16 @@ class snorkelMail(object):
 
 def main():
 	mailClient = snorkelMail()
+
+	mainWindow = curses.newwin(curses.LINES-2, curses.COLS, 1,0)
+	subWindow = mainWindow.subwin(curses.LINES-6, curses.COLS-4,3,2)
+	mainWindow.box()
+
 	x = 0
 	mailClient.format_screen()
 
-	# Note to self: Find a way to make this better
+	# Find a way to make this better
+	# Will get this from config file
 	mailClient.screen.border(0)
 	mailClient.screen.addstr(2,2,"Enter Mail Server: ")
 	mailServer = mailClient.screen.getstr()
@@ -90,12 +104,15 @@ def main():
 	password = mailClient.screen.getstr()
 	mailClient.format_screen()
 
-
 	mailClient.screen.clear()
-	mailClient.screen.border(0)
+	mailClient.screen.addstr("Snorkel", curses.A_REVERSE)
+	mailClient.screen.chgat(-1, curses.A_REVERSE)
 
 	# Get mail on start up
 	mailClient.read_mail(mailServer, username, password)
+
+	mailClient.screen.noutrefresh()
+	subWindow.noutrefresh()
 
 	while x != ord("4"):
 		x = mailClient.screen.getch()
