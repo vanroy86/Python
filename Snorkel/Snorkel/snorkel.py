@@ -18,9 +18,6 @@ class snorkelMail(object):
 	def parse_config_file(self, configFile):
 		pass
 
-	def get_new_mail(self):
-		pass
-
 	def read_mail(self, mailServer, username, password):
 		# try to connect to the server
 		imap = imaplib.IMAP4_SSL(mailServer)
@@ -35,7 +32,7 @@ class snorkelMail(object):
 
 		status, response = imap.search(None, "(UNSEEN)") # Check for unread messages
 		unreadMessages = response[0].split()
-		self.screen.addstr(2,2,"You have %s unread messages in Inbox" % len(unreadMessages)) # Print how many unread messages there are
+		self.screen.addstr(2,3,"You have %s unread messages in Inbox" % len(unreadMessages)) # Print how many unread messages there are
 
 		status, response = imap.search(None, "ALL") # Search for all messages
 		unreadMessages = response[0]
@@ -114,9 +111,11 @@ def main():
 	mailClient.screen.noutrefresh()
 	subWindow.noutrefresh()
 
-	while x != ord("4"):
+	while x != ord("Q"):
 		x = mailClient.screen.getch()
 		# Will add calls to other methods here
+		if x == ord("R"):
+			mailClient.read_mail(mailServer, username, password)
 
 	curses.endwin() # Restore terminal to original user mode
 
