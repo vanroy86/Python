@@ -2,6 +2,7 @@ import os,sys
 import curses
 import imaplib
 import email
+import ConfigParser
 
 class snorkelMail(object):
 	def __init__(self):
@@ -78,6 +79,15 @@ class snorkelMail(object):
 
 
 def main():
+	config = ConfigParser.ConfigParser()
+	config.read("snorkel.cfg")
+
+	# Read the config file and use raw mode
+	mailServer = config.get("Server Config", "server", 0)
+	username = config.get("Server Config", "username", 0)
+	password = config.get("Server Config", "password", 0)
+
+
 	mailClient = snorkelMail()
 
 	mainWindow = curses.newwin(curses.LINES-2, curses.COLS, 1,0)
@@ -87,24 +97,25 @@ def main():
 	x = 0
 	mailClient.format_screen()
 
-	# Find a way to make this better
-	# Will get this from config file
-	mailClient.screen.border(0)
-	mailClient.screen.addstr(2,2,"Enter Mail Server: ")
-	mailServer = mailClient.screen.getstr()
-	mailClient.format_screen()
-	mailClient.screen.addstr(2,2,"Enter Email Address: ")
-	username = mailClient.screen.getstr()
-	mailClient.format_screen()
-	mailClient.screen.addstr(2,2,"Enter Password for %s: " % username)
-	curses.noecho()
-	password = mailClient.screen.getstr()
-	mailClient.format_screen()
+	if mailServer == "":
+		mailClient.screen.border(0)
+		mailClient.screen.addstr(2,2,"Enter Mail Server: ")
+		mailServer = mailClient.screen.getstr()
+		mailClient.format_screen()
+	if username == "":
+		mailClient.screen.addstr(2,2,"Enter Email Address: ")
+		username = mailClient.screen.getstr()
+		mailClient.format_screen()
+	if password == "":
+		mailClient.screen.addstr(2,2,"Enter Password for %s: " % username)
+		curses.noecho()
+		password = mailClient.screen.getstr()
+		mailClient.format_screen()
 
 	mailClient.screen.clear()
 	mailClient.screen.addstr("Snorkel", curses.A_REVERSE)
 	mailClient.screen.chgat(-1, curses.A_REVERSE)
-
+	curses.noecho()
 	# Get mail on start up
 	mailClient.read_mail(mailServer, username, password)
 
