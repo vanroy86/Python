@@ -33,7 +33,7 @@ class snorkelMail(object):
 
 		status, response = imap.search(None, "(UNSEEN)") # Check for unread messages
 		unreadMessages = response[0].split()
-		self.screen.addstr(2,3,"You have %s unread messages in Inbox" % len(unreadMessages)) # Print how many unread messages there are
+		self.screen.addstr(2,3,"You have %s unread messages in Inbox" % len(unreadMessages), curses.color_pair(1)) # Print how many unread messages there are
 
 		status, response = imap.search(None, "ALL") # Search for all messages
 		unreadMessages = response[0]
@@ -61,8 +61,8 @@ class snorkelMail(object):
 			if len(messageFrom) > 35:
 				messageFrom = messageFrom[0:32] + "..."
 
-			self.screen.addstr(3,3,"[From]")
-			self.screen.addstr(3,40,"[Subject]")
+			self.screen.addstr(3,3,"[From]", curses.color_pair(2))
+			self.screen.addstr(3,40,"[Subject]", curses.color_pair(2))
 			self.screen.addstr(k,3,"[" + messageFrom.split()[-1] + "]") # Print the sender address to the screen. Using an incremented variable to print on different lines.
 			self.screen.refresh() # For debugging
 			self.screen.addstr(k,40 ,"[" + messageSubject + "]" )
