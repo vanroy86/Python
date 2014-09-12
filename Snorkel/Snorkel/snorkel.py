@@ -99,15 +99,15 @@ def main():
 
 	if mailServer == "":
 		mailClient.screen.border(0)
-		mailClient.screen.addstr(2,2,"Enter Mail Server: ")
+		mailClient.screen.addstr(2,2,"Enter Mail Server: ", curses.color_pair(1))
 		mailServer = mailClient.screen.getstr()
 		mailClient.format_screen()
 	if username == "":
-		mailClient.screen.addstr(2,2,"Enter Email Address: ")
+		mailClient.screen.addstr(2,2,"Enter Email Address: ", curses.color_pair(1))
 		username = mailClient.screen.getstr()
 		mailClient.format_screen()
 	if password == "":
-		mailClient.screen.addstr(2,2,"Enter Password for %s: " % username)
+		mailClient.screen.addstr(2,2,"Enter Password for %s: " % username, curses.color_pair(1))
 		curses.noecho()
 		password = mailClient.screen.getstr()
 		mailClient.format_screen()
