@@ -12,7 +12,7 @@ def printProfile(skypeDB):
         print "[+] Profile Date: " + str(row[4])
 
 def main():
-    skypeDB = "/home/blueberry/main.db"
+    skypeDB = "/path/to/database"
     printProfile(skypeDB)
 
 if __name__ == "__main__":
