@@ -16,6 +16,13 @@ def printProfile(skypeDB):
 
     return (user, skypeUsername, city, country, profileTime)
 
+def printContacts(skypeDB):
+    conn = sqlite3.connect(skypeDB)
+    c = conn.cursor()
+    c.execute("SELECT fullname, skypename, city, country, datetime(profile_timestamp, 'unixepoch') FROM Contacts")
+    for row in c:
+        ttk.Label(mainframe, text = "User: ").grid(column = 1, row = 7, sticky = (W, E))
+
 def main():
     skypeDB = "/home/blueberry/main.db"
     root = Tk() # Define a root window
@@ -30,7 +37,9 @@ def main():
 
     titleFormat = "Helvetica 12 italic"
 
-    # Create a Label, tell it which frame to user, what to display and where to go in the frame
+
+    # Basic Information
+    # Add Labels to the screen
     ttk.Label(mainframe, text = "Basic Information", font = titleFormat).grid(column = 1, row = 1, sticky = (W, E))
 
     ttk.Label(mainframe, text = "Full Name: ").grid(column = 1, row = 2, sticky = (W, E))
