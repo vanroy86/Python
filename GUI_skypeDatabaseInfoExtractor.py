@@ -24,7 +24,7 @@ def printContacts(skypeDB):
         ttk.Label(mainframe, text = "User: ").grid(column = 1, row = 7, sticky = (W, E))
 
 def main():
-    skypeDB = "/home/blueberry/main.db"
+    skypeDB = "path/to/database"
     root = Tk() # Define a root window
     root.title("Skype Database Info Extractor") # Give the root window a title
     root.geometry("600x400") # Set the size of the window
