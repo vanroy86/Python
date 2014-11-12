@@ -83,7 +83,17 @@ class pythonTextEditor(wx.Frame):
     def on_preferences(self, event):
         noResizeStyle = wx.DEFAULT_FRAME_STYLE & ~ (wx.RESIZE_BORDER | wx.RESIZE_BOX | wx.MAXIMIZE_BOX)
         preferencesFrame = wx.Frame(None, -1,title="Preferences", size=(600,800),style=noResizeStyle)
+        self.check = wx.CheckBox(self, wx.NewId(), "Red text")
+        self.check.Bind(wx.EVT_CHECKBOX, self.on_check)
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        sizer.Add(self.check, 0)
+        preferencesFrame.SetSizerAndFit(sizer)
         preferencesFrame.Show(True)
+
+    def on_check(self, event):
+        self.control.SetForegroundColour(wx.RED)
 
 app = wx.App(False)
 frame = pythonTextEditor(None, "Small editor")
