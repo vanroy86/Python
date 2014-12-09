@@ -40,8 +40,9 @@ class Inventory(object):
         product_name = self.get_search_term(yaml_data)
 
         try: # If the product actually exists then print it otherwise throw an error
-            print "\n[+] Product found: " + product_name
-            print yaml.dump(yaml_data["Products"][product_name], default_flow_style = False)
+            if yaml.dump(yaml_data["Products"][product_name], default_flow_style = False) != KeyError:
+                print "\n[+] Product found: " + product_name
+                print yaml.dump(yaml_data["Products"][product_name], default_flow_style = False)
         except KeyError, e:
             print "\n[!] Product not found: " + str(e)
             main()
@@ -68,7 +69,7 @@ def main():
         elif user_input == 2:
             inventory.search_inventory(yaml_data)
         else:
-            running = False
+            exit(0)
 
 if __name__ == "__main__":
     main()
