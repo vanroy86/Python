@@ -21,7 +21,9 @@ class Inventory(object):
         pass
 
     def add_product(self):
-        pass
+        stream = file("./products.yaml", "a")
+        data = {"orange": {"price": 0.4,"id": 4,"quantity": 100}}}
+        yaml.dump(data,stream)
 
     def remove_product(self):
         pass
@@ -68,6 +70,8 @@ def main():
             inventory.view_inventory(yaml_data)
         elif user_input == 2:
             inventory.search_inventory(yaml_data)
+        elif user_input == 3:
+            inventory.add_product()
         else:
             exit(0)
 
