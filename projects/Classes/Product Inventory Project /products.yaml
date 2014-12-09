@@ -1,0 +1,9 @@
+Products:
+     apple:
+        id: 1
+        price: 0.50
+        quantity: 100
+     pear:
+         id: 2
+         price: 0.30
+         quantity: 50
