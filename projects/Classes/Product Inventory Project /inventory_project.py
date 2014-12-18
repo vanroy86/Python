@@ -1,29 +1,33 @@
 import yaml
 
 class Product(object):
-    def __init__(self, ID, name, price, quantity):
+    def __init__(self):
+        pass
+
+    def create_product(self, ID, name, price, quantity):
         self.ID = ID
         self.name = name
         self.price = price
         self.quantity = quantity
+        product = {name: {"price" : price, "id" : ID, "quantity" : quantity}}
+        return product
 
     def get_price(self, name):
-        print "get_price"
+        return self.price
 
     def get_ID(self, name):
-        print "get_ID"
+        return self.ID
 
     def get_quantity(self, name):
-        print "get_quantity"
+        return self.quantity
 
 class Inventory(object):
     def __init__(self):
         pass
 
-    def add_product(self):
+    def add_product(self, product):
         stream = file("./products.yaml", "a")
-        data = {"orange": {"price": 0.4,"id": 4,"quantity": 100}}}
-        yaml.dump(data,stream)
+        yaml.dump(product,stream, default_flow_style = False) # .dump() can be used to append YAML files or print them
 
     def remove_product(self):
         pass
@@ -42,14 +46,16 @@ class Inventory(object):
         product_name = self.get_search_term(yaml_data)
 
         try: # If the product actually exists then print it otherwise throw an error
-            if yaml.dump(yaml_data["Products"][product_name], default_flow_style = False) != KeyError:
+            if yaml.dump(yaml_data[product_name], default_flow_style = False) != KeyError:
                 print "\n[+] Product found: " + product_name
-                print yaml.dump(yaml_data["Products"][product_name], default_flow_style = False)
+                print yaml.dump(yaml_data[product_name], default_flow_style = False)
         except KeyError, e:
             print "\n[!] Product not found: " + str(e)
             main()
+
 def main():
     inventory = Inventory()
+    product = Product()
 
     # Open the YAML file and load it into a variable
     yaml_file = open("./products.yaml")
@@ -62,7 +68,7 @@ def main():
         print "-- Options --\n"
         print "1. View inventory"
         print "2. Search inventory"
-        print "3. Exit"
+        print "3. Add product to inventory"
 
         user_input = int(raw_input("> "))
 
@@ -71,7 +77,11 @@ def main():
         elif user_input == 2:
             inventory.search_inventory(yaml_data)
         elif user_input == 3:
-            inventory.add_product()
+            ID = int(raw_input("[+] Enter the ID of the new product: "))
+            name = str(raw_input("[+] Enter the NAME of the new product: "))
+            price = float(raw_input("[+] Enter the PRICE of the new product: "))
+            quantity = int(raw_input("[+] Enter the QUANTITY of the new product: "))
+            inventory.add_product(product.create_product(ID, name, price, quantity ))
         else:
             exit(0)
 
