@@ -9,7 +9,14 @@ class Product(object):
         self.name = name
         self.price = price
         self.quantity = quantity
-        product = {name: {"price" : price, "id" : ID, "quantity" : quantity}}
+        yaml_file = open("./products.yaml")
+        yaml_data = yaml.safe_load(yaml_file)
+        k = 0
+        for i in yaml.dump(yaml_data, default_flow_style = False):
+            k += 1
+            print yaml_data.items()[k]
+
+        product = {name.lower(): {"price" : price, "id" : ID, "quantity" : quantity}}
         return product
 
     def get_price(self, name):
@@ -60,7 +67,7 @@ def main():
     # Open the YAML file and load it into a variable
     yaml_file = open("./products.yaml")
     yaml_data = yaml.safe_load(yaml_file)
-
+    print yaml_data
     # Set up a loop so the program doesn't end and display the menu
     running = True
     while running:
@@ -70,20 +77,24 @@ def main():
         print "2. Search inventory"
         print "3. Add product to inventory"
 
-        user_input = int(raw_input("> "))
+        try: # Check that the user input is a whole number
+            user_input = int(raw_input("> "))
 
-        if user_input == 1:
-            inventory.view_inventory(yaml_data)
-        elif user_input == 2:
-            inventory.search_inventory(yaml_data)
-        elif user_input == 3:
-            ID = int(raw_input("[+] Enter the ID of the new product: "))
-            name = str(raw_input("[+] Enter the NAME of the new product: "))
-            price = float(raw_input("[+] Enter the PRICE of the new product: "))
-            quantity = int(raw_input("[+] Enter the QUANTITY of the new product: "))
-            inventory.add_product(product.create_product(ID, name, price, quantity ))
-        else:
-            exit(0)
+            if user_input == 1:
+                inventory.view_inventory(yaml_data)
+            elif user_input == 2:
+                inventory.search_inventory(yaml_data)
+            elif user_input == 3:
+                ID = int(raw_input("[+] Enter the ID of the new product: "))
+                name = str(raw_input("[+] Enter the NAME of the new product: "))
+                price = float(raw_input("[+] Enter the PRICE of the new product: "))
+                quantity = int(raw_input("[+] Enter the QUANTITY of the new product: "))
+                inventory.add_product(product.create_product(ID, name, price, quantity ))
+            else:
+                exit(0)
+        except ValueError, e:
+           print "[!] Input must be a whole number: " + str(e)
+           exit(0)
 
 if __name__ == "__main__":
     main()
