@@ -1,29 +1,43 @@
-import yaml
+import yaml,sys
 
 class Product(object):
     def __init__(self):
         pass
 
-    def create_product(self, ID, name, price, quantity):
-        self.ID = ID
-        self.name = name
-        self.price = price
-        self.quantity = quantity
-        yaml_file = open("./products.yaml")
-        yaml_data = yaml.safe_load(yaml_file)
-        k = 0
-        for i in yaml.dump(yaml_data, default_flow_style = False):
-            k += 1
-            print yaml_data.items()[k]
+    def create_product(self):
+        ID = self.get_new_ID()
+        name = str(raw_input("[+] Enter the NAME of the new product: "))
+        price = float(raw_input("[+] Enter the PRICE of the new product: "))
+        quantity = int(raw_input("[+] Enter the QUANTITY of the new product: "))
 
-        product = {name.lower(): {"price" : price, "id" : ID, "quantity" : quantity}}
-        return product
+        # Formatting
+        name.lower()
+
+        if (ID == None) | (name == "") | (price == None) | (quantity == None):
+            print "[!] Error. Cannot be None"
+            exit(0)
+        else:
+            product = {name: {"price" : price, "id" : ID, "quantity" : quantity}}
+            return product
 
     def get_price(self, name):
         return self.price
 
-    def get_ID(self, name):
+    def get_ID(self):
         return self.ID
+
+    def get_new_ID(self):
+        yaml_file = open("./products.yaml")
+        yaml_data = yaml.safe_load(yaml_file)
+
+        highest_ID = 0 # keep track of the IDs
+
+        for key,value in yaml_data.items():
+            for i,k in value.items():
+                if i == "id":
+                    if highest_ID < k:
+                        highest_ID = k
+        return highest_ID + 1
 
     def get_quantity(self, name):
         return self.quantity
@@ -67,7 +81,7 @@ def main():
     # Open the YAML file and load it into a variable
     yaml_file = open("./products.yaml")
     yaml_data = yaml.safe_load(yaml_file)
-    print yaml_data
+
     # Set up a loop so the program doesn't end and display the menu
     running = True
     while running:
@@ -85,11 +99,8 @@ def main():
             elif user_input == 2:
                 inventory.search_inventory(yaml_data)
             elif user_input == 3:
-                ID = int(raw_input("[+] Enter the ID of the new product: "))
-                name = str(raw_input("[+] Enter the NAME of the new product: "))
-                price = float(raw_input("[+] Enter the PRICE of the new product: "))
-                quantity = int(raw_input("[+] Enter the QUANTITY of the new product: "))
-                inventory.add_product(product.create_product(ID, name, price, quantity ))
+                 new_product = product.create_product()
+                 inventory.add_product(new_product)
             else:
                 exit(0)
         except ValueError, e:
