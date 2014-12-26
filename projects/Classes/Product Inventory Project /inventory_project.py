@@ -1,11 +1,11 @@
 import yaml,sys
 
 class Product(object):
-    def __init__(self):
-        pass
+    def __init__(self, yaml_data):
+        self.yaml_data = yaml_data
 
     def create_product(self):
-        ID = self.get_new_ID()
+        ID = self.get_new_ID() # Automatically get new ID
         name = str(raw_input("[+] Enter the NAME of the new product: "))
         price = float(raw_input("[+] Enter the PRICE of the new product: "))
         quantity = int(raw_input("[+] Enter the QUANTITY of the new product: "))
@@ -26,14 +26,12 @@ class Product(object):
     def get_ID(self):
         return self.ID
 
-    def get_new_ID(self):
-        yaml_file = open("./products.yaml")
-        yaml_data = yaml.safe_load(yaml_file)
-
-        highest_ID = 0 # keep track of the IDs
-
-        for key,value in yaml_data.items():
-            for i,k in value.items():
+    def get_new_ID(self): # Automatically find the highest ID and then add 1 to create a new ID
+        highest_ID = 0 # Keep track of the IDs
+        # yaml_data is a list with 2 dicts inside.
+        # Here we loop through the list and then through the dicts to finally find the ID
+        for key,value in self.yaml_data.items(): # Looping through the list
+            for i,k in value.items(): # Looping through the dicts
                 if i == "id":
                     if highest_ID < k:
                         highest_ID = k
@@ -43,11 +41,12 @@ class Product(object):
         return self.quantity
 
 class Inventory(object):
-    def __init__(self):
-        pass
+    def __init__(self, yaml_file_path, yaml_data):
+       self.yaml_file_path = yaml_file_path
+       self.yaml_data = yaml_data
 
     def add_product(self, product):
-        stream = file("./products.yaml", "a")
+        stream = file(self.yaml_file_path, "a") # Open the YAML file in append mode
         yaml.dump(product,stream, default_flow_style = False) # .dump() can be used to append YAML files or print them
 
     def remove_product(self):
@@ -56,31 +55,32 @@ class Inventory(object):
     def update_product(self):
         pass
 
-    def view_inventory(self, yaml_data):
-        print yaml.dump(yaml_data, default_flow_style = False)
+    def view_inventory(self):
+        print yaml.dump(self.yaml_data, default_flow_style = False)
 
-    def get_search_term(self, yaml_data):
+    def get_search_term(self):
         search_term = raw_input("[+] Type the name of the product you want to search: ")
         return search_term.lower()
 
-    def search_inventory(self,yaml_data):
-        product_name = self.get_search_term(yaml_data)
+    def search_inventory(self):
+        product_name = self.get_search_term()
 
         try: # If the product actually exists then print it otherwise throw an error
-            if yaml.dump(yaml_data[product_name], default_flow_style = False) != KeyError:
+            if yaml.dump(self.yaml_data[product_name], default_flow_style = False) != KeyError:
                 print "\n[+] Product found: " + product_name
-                print yaml.dump(yaml_data[product_name], default_flow_style = False)
+                print yaml.dump(self.yaml_data[product_name], default_flow_style = False)
         except KeyError, e:
             print "\n[!] Product not found: " + str(e)
             main()
 
 def main():
-    inventory = Inventory()
-    product = Product()
-
     # Open the YAML file and load it into a variable
-    yaml_file = open("./products.yaml")
+    yaml_file_path = "./products.yaml"
+    yaml_file = open(yaml_file_path)
     yaml_data = yaml.safe_load(yaml_file)
+
+    inventory = Inventory(yaml_file_path, yaml_data)
+    product = Product(yaml_data)
 
     # Set up a loop so the program doesn't end and display the menu
     running = True
@@ -95,16 +95,16 @@ def main():
             user_input = int(raw_input("> "))
 
             if user_input == 1:
-                inventory.view_inventory(yaml_data)
+                inventory.view_inventory()
             elif user_input == 2:
-                inventory.search_inventory(yaml_data)
+                inventory.search_inventory()
             elif user_input == 3:
                  new_product = product.create_product()
                  inventory.add_product(new_product)
             else:
                 exit(0)
-        except ValueError, e:
-           print "[!] Input must be a whole number: " + str(e)
+        except:
+           print "[!] " + str(sys.exc_info()[0])
            exit(0)
 
 if __name__ == "__main__":
