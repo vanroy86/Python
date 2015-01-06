@@ -12,6 +12,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>."""
+import yaml, sys
 
 class Product(object):
     def __init__(self, yaml_data):
@@ -61,9 +62,20 @@ class Inventory(object):
     def add_product(self, product):
         stream = file(self.yaml_file_path, "a") # Open the YAML file in append mode
         yaml.dump(product,stream, default_flow_style = False) # .dump() can be used to append YAML files or print them
+        main()
 
     def remove_product(self):
-        pass
+        product_to_delete = self.get_search_term()
+        stream = file(self.yaml_file_path, "w") # Open the YAML file in write mode instead of append so we don't get duplicates
+        try:# If the product actually exists
+            if yaml.dump(self.yaml_data[product_to_delete], default_flow_style = False) != KeyError:
+                new_yaml = self.yaml_data
+                del new_yaml[product_to_delete]
+                yaml.dump(new_yaml, stream,default_flow_style = False) # Write the new YAML layout to the file
+
+        except KeyError, e:
+            print "[!] Product not found: " + str(e)
+            main()
 
     def update_product(self):
         pass
@@ -72,7 +84,7 @@ class Inventory(object):
         print yaml.dump(self.yaml_data, default_flow_style = False)
 
     def get_search_term(self):
-        search_term = raw_input("[+] Type the name of the product you want to search: ")
+        search_term = raw_input("[+] Type the name of the product: ")
         return search_term.lower()
 
     def search_inventory(self):
@@ -89,8 +101,8 @@ class Inventory(object):
 def main():
     # Open the YAML file and load it into a variable
     yaml_file_path = "./products.yaml"
-    yaml_file = open(yaml_file_path)
-    yaml_data = yaml.safe_load(yaml_file)
+    with open(yaml_file_path) as yaml_file:
+        yaml_data = yaml.safe_load(yaml_file)
 
     inventory = Inventory(yaml_file_path, yaml_data)
     product = Product(yaml_data)
@@ -103,6 +115,8 @@ def main():
         print "1. View inventory"
         print "2. Search inventory"
         print "3. Add product to inventory"
+        print "4. Remove product"
+        print "5. Exit"
 
         try: # Check that the user input is a whole number
             user_input = int(raw_input("> "))
@@ -114,10 +128,14 @@ def main():
             elif user_input == 3:
                  new_product = product.create_product()
                  inventory.add_product(new_product)
+            elif user_input == 4:
+                 inventory.remove_product()
+            elif user_input == 5:
+                 exit(0)
             else:
                 exit(0)
         except:
-           print "[!] " + str(sys.exc_info()[0])
+           print "[!] " + str(sys.exc_info())
            exit(0)
 
 if __name__ == "__main__":
