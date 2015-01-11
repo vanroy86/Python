@@ -77,8 +77,11 @@ class Inventory(object):
             print "[!] Product not found: " + str(e)
             main()
 
-    def update_product(self):
-        pass
+    def update_product(self, new_product):
+        product = self.get_search_term()
+        product_to_update = new_product[product]
+        if yaml.dump(self.yaml_data[product_to_update], default_flow_style = False) != KeyError:
+            yaml.dump(self.yaml_data[product_to_update], new_product, default_flow_style = False)
 
     def view_inventory(self):
         print yaml.dump(self.yaml_data, default_flow_style = False)
@@ -131,7 +134,8 @@ def main():
             elif user_input == 4:
                  inventory.remove_product()
             elif user_input == 5:
-                 exit(0)
+                 new_product = product.create_product()
+                 inventory.update_product(new_product)
             else:
                 exit(0)
         except:
