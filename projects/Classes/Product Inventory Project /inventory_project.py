@@ -77,20 +77,21 @@ class Inventory(object):
             print "[!] Product not found: " + str(e)
             main()
 
-    def update_product(self, new_product, product_to_update):
+    def update_product(self, new_product):
         stream = file(self.yaml_file_path, "w")
         # Check if the current product exists
-        if yaml.dump(self.yaml_data[product_to_update], default_flow_style = False) != KeyError:
+        if yaml.dump(self.yaml_data[new_product.keys()[0]], default_flow_style = False) != KeyError:
             new_yaml = self.yaml_data
-            del new_yaml[product_to_update] # Delete the old product
+            del new_yaml[new_product.keys()[0]] # Delete the old product
             new_yaml.update(new_product) # Add the new updated product to the file
             yaml.dump(new_yaml, stream, default_flow_style = False) # Write the new changes to the file
+            print "[+] Product updated"
 
     def view_inventory(self):
         print yaml.dump(self.yaml_data, default_flow_style = False)
 
     def get_search_term(self):
-        search_term = raw_input("[+] Type the name of the product: ")
+        search_term = raw_input("[+] Type the NAME of the product: ")
         return search_term.lower()
 
     def search_inventory(self):
@@ -137,9 +138,8 @@ def main():
             elif user_input == 4:
                  inventory.remove_product()
             elif user_input == 5:
-                 product_to_update = inventory.get_search_term()
                  new_product = product.create_product()
-                 inventory.update_product(new_product, product_to_update)
+                 inventory.update_product(new_product)
             else:
                 exit(0)
         except:

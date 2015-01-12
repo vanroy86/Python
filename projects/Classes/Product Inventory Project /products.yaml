@@ -1,7 +1,7 @@
 apple:
-  id: 4
-  price: 200.0
-  quantity: 200
+  id: 6
+  price: 0.9
+  quantity: 300
 chocolate:
   id: 2
   price: 0.12
