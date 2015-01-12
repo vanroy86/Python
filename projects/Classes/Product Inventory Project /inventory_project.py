@@ -77,11 +77,14 @@ class Inventory(object):
             print "[!] Product not found: " + str(e)
             main()
 
-    def update_product(self, new_product):
-        product = self.get_search_term()
-        product_to_update = new_product[product]
+    def update_product(self, new_product, product_to_update):
+        stream = file(self.yaml_file_path, "w")
+        # Check if the current product exists
         if yaml.dump(self.yaml_data[product_to_update], default_flow_style = False) != KeyError:
-            yaml.dump(self.yaml_data[product_to_update], new_product, default_flow_style = False)
+            new_yaml = self.yaml_data
+            del new_yaml[product_to_update] # Delete the old product
+            new_yaml.update(new_product) # Add the new updated product to the file
+            yaml.dump(new_yaml, stream, default_flow_style = False) # Write the new changes to the file
 
     def view_inventory(self):
         print yaml.dump(self.yaml_data, default_flow_style = False)
@@ -119,7 +122,7 @@ def main():
         print "2. Search inventory"
         print "3. Add product to inventory"
         print "4. Remove product"
-        print "5. Exit"
+        print "5. Update a product"
 
         try: # Check that the user input is a whole number
             user_input = int(raw_input("> "))
@@ -134,8 +137,9 @@ def main():
             elif user_input == 4:
                  inventory.remove_product()
             elif user_input == 5:
+                 product_to_update = inventory.get_search_term()
                  new_product = product.create_product()
-                 inventory.update_product(new_product)
+                 inventory.update_product(new_product, product_to_update)
             else:
                 exit(0)
         except:

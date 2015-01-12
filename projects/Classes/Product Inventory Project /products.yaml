@@ -1,12 +1,12 @@
 apple:
-  id: 1
-  price: 0.5
-  quantity: 100
-chocolate:
   id: 4
   price: 200.0
   quantity: 200
+chocolate:
+  id: 2
+  price: 0.12
+  quantity: 123
 strawberry:
-  id: 5
+  id: 3
   price: 0.2
   quantity: 200
